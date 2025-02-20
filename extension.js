@@ -29,7 +29,7 @@ function getWebviewContent() {
         input, select, textarea { background-color: #333; color: #ddd; }
         button { background-color: #007acc; color: white; cursor: pointer; }
         button:hover { background-color: #005f99; }
-        pre { background: #222; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+        pre { background: #222; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; font-size: 16px; } /* Increased font size */
         .container { max-width: 600px; margin: auto; }
       </style>
       <script>
