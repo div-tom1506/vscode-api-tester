@@ -14,8 +14,6 @@ A lightweight API Testing tool inside VS Code, designed as a minimal alternative
 
 ## Installation
 
-### For Development & Testing
-
 Clone the repository:
 ``` bash
 git clone https://github.com/your-repo/vscode-api-tester.git
@@ -37,7 +35,7 @@ A new VS Code Extension Development Host window will open.
 
 ## How to Use
 
-Open the Command Palette (Ctrl + Shift + P).
+Open the Command Palette (`Ctrl + Shift + P`).
 
 Search for **"api tester"** and select it.
 
@@ -48,6 +46,16 @@ Add optional Headers and Body if required.
 Use Authentication options (Bearer Token / Basic Auth) when needed.
 
 View the response JSON inside the panel.
+
+## Contributing
+
+If you want to improve this extension:
+
+Fork the repository
+
+Create a new branch for your feature or fix
+
+Submit a pull request with your changes
 
 ## License
 
