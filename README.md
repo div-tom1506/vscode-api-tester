@@ -18,16 +18,13 @@ Clone the repository:
 
     git clone https://github.com/your-repo/vscode-api-tester.git
     cd vscode-api-tester
-
 Open the project in VS Code:
 
     code .
-
 Install dependencies (if any) and compile:
 
     npm install
     npm run compile
-
 Run the extension in Development Mode:
 Open the Debug Panel (`Ctrl + Shift + D`)
 Select "Run Extension" and press F5
