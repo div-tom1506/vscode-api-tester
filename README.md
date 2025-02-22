@@ -15,21 +15,21 @@ A lightweight API Testing tool inside VS Code, designed as a minimal alternative
 ## Installation
 
 Clone the repository:
-``` bash
-git clone https://github.com/your-repo/vscode-api-tester.git
-cd vscode-api-tester
-```
+
+    git clone https://github.com/your-repo/vscode-api-tester.git
+    cd vscode-api-tester
+
 Open the project in VS Code:
-```
-code .
-```
+
+    code .
+
 Install dependencies (if any) and compile:
-```
-npm install
-npm run compile
-```
+
+    npm install
+    npm run compile
+
 Run the extension in Development Mode:
-Open the Debug Panel (Ctrl + Shift + D)
+Open the Debug Panel (`Ctrl + Shift + D`)
 Select "Run Extension" and press F5
 A new VS Code Extension Development Host window will open.
 
