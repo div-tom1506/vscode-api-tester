@@ -2,12 +2,13 @@
   "name": "vscode-api-tester",
   "displayName": "vscode api tester",
   "description": "The API Tester Extension is a lightweight alternative to Postman, built directly into VS Code. It allows developers to test REST APIs without leaving their coding environment.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "engines": {
     "vscode": "^1.97.0"
   },
   "categories": [
-    "Programming Languages", "Testing"
+    "Programming Languages",
+    "Testing"
   ],
   "activationEvents": [],
   "main": "./extension.js",
