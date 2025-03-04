@@ -61,13 +61,18 @@ function getWebviewContent() {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>API Tester</title>
       <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #1e1e1e; color: #ddd; }
+        body { 
+          font-family: Arial, sans-serif; 
+          margin: 20px; 
+          background-color: #1e1e1e; 
+          color: #ddd; 
+        }
         .container {
           max-width: 600px;
           margin: auto;
           display: flex;
           flex-direction: column;
-          gap: 10px;
+          gap: 12px;
         }
         .form-group {
           display: flex;
@@ -87,14 +92,23 @@ function getWebviewContent() {
           font-size: 14px;
           background-color: #333;
           color: #ddd;
+          transition: box-shadow 0.3s ease-in-out, transform 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+          outline: none;
+          box-shadow: 0 0 10px #00e5ff;
+          transform: scale(1.02);
         }
         button {
           background-color: #007acc;
           color: white;
           cursor: pointer;
+          box-shadow: 0 0 8px rgba(0, 122, 204, 0.8);
         }
         button:hover {
           background-color: #005f99;
+          box-shadow: 0 0 15px rgba(0, 229, 255, 0.9);
+          transform: scale(1.05);
         }
         .json-container {
           background: #222;
@@ -103,12 +117,19 @@ function getWebviewContent() {
           font-size: 16px;
           white-space: pre-wrap;
           word-wrap: break-word;
+          transition: box-shadow 0.3s ease-in-out;
         }
-        .key { color: #f08d49; }  /* Orange color for keys */
+        .success {
+          box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
+        }
+        .error {
+          box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+        }
+        .key { color: #f08d49; }  /* Orange for keys */
         .string { color: #8bc34a; }  /* Green for strings */
         .number { color: #ffeb3b; }  /* Yellow for numbers */
         .boolean { color: #03a9f4; }  /* Blue for booleans */
-        .null { color: #ff5722; }  /* Red for null values */
+        .null { color: #ff5722; }  /* Red for null */
       </style>
     </head>
     <body>
@@ -179,10 +200,16 @@ function getWebviewContent() {
 
         window.addEventListener("message", (event) => {
           const message = event.data;
+          const responseDiv = document.getElementById("response");
+
           if (message.command === "response") {
-            document.getElementById("response").innerHTML = message.response.success
-              ? "<h3>✅ Response:</h3><pre>" + syntaxHighlight(JSON.stringify(message.response.data, null, 2)) + "</pre>"
-              : "<span style='color: red;'>❌ Error: " + message.response.error + "</span>";
+            if (message.response.success) {
+              responseDiv.className = "json-container success";
+              responseDiv.innerHTML = "<h3>✅ Response:</h3><pre>" + syntaxHighlight(JSON.stringify(message.response.data, null, 2)) + "</pre>";
+            } else {
+              responseDiv.className = "json-container error";
+              responseDiv.innerHTML = "<h3 style='color:red;'>❌ Error:</h3><pre>" + message.response.error + "</pre>";
+            }
           }
         });
 
