@@ -62,35 +62,101 @@ function getWebviewContent() {
       <title>API Tester</title>
       <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #1e1e1e; color: #ddd; }
-        input, select, textarea, button { width: 100%; margin: 10px 0; padding: 10px; border-radius: 5px; border: none; font-size: 14px; }
-        input, select, textarea { background-color: #333; color: #ddd; }
-        button { background-color: #007acc; color: white; cursor: pointer; }
-        button:hover { background-color: #005f99; }
-        .json-container { background: #222; padding: 10px; border-radius: 5px; font-size: 16px; white-space: pre-wrap; word-wrap: break-word; }
-         .key { color: #f08d49; }  /* Orange color for keys */
+        .container {
+          max-width: 600px;
+          margin: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .form-group {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        label {
+          width: 150px;
+          text-align: right;
+          font-weight: bold;
+        }
+        input, select, textarea, button {
+          flex: 1;
+          padding: 10px;
+          border-radius: 5px;
+          border: none;
+          font-size: 14px;
+          background-color: #333;
+          color: #ddd;
+        }
+        button {
+          background-color: #007acc;
+          color: white;
+          cursor: pointer;
+        }
+        button:hover {
+          background-color: #005f99;
+        }
+        .json-container {
+          background: #222;
+          padding: 10px;
+          border-radius: 5px;
+          font-size: 16px;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
+        .key { color: #f08d49; }  /* Orange color for keys */
         .string { color: #8bc34a; }  /* Green for strings */
         .number { color: #ffeb3b; }  /* Yellow for numbers */
         .boolean { color: #03a9f4; }  /* Blue for booleans */
         .null { color: #ff5722; }  /* Red for null values */
-        .container { max-width: 600px; margin: auto; }
       </style>
     </head>
     <body>
       <div class="container">
         <h2>API Tester</h2>
-        <input type="text" id="url" placeholder="Enter API URL" />
-        <select id="method">
-          <option value="GET">GET</option>
-          <option value="POST">POST</option>
-          <option value="PUT">PUT</option>
-          <option value="DELETE">DELETE</option>
-        </select>
-        <textarea id="headers" placeholder='Headers (JSON format)'></textarea>
-        <textarea id="body" placeholder='Request Body (JSON format)'></textarea>
-        <input type="text" id="bearerToken" placeholder="Bearer Token (optional)" />
-        <input type="text" id="username" placeholder="Username (for Basic Auth)" />
-        <input type="password" id="password" placeholder="Password (for Basic Auth)" />
+        
+        <div class="form-group">
+          <label>API URL:</label>
+          <input type="text" id="url" placeholder="Enter API URL" />
+        </div>
+
+        <div class="form-group">
+          <label>Method:</label>
+          <select id="method">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Headers:</label>
+          <textarea id="headers" placeholder='Headers (JSON format)'></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Request Body:</label>
+          <textarea id="body" placeholder='Request Body (JSON format)'></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Bearer Token:</label>
+          <input type="text" id="bearerToken" placeholder="Optional" />
+        </div>
+
+        <div class="form-group">
+          <label>Username:</label>
+          <input type="text" id="username" placeholder="For Basic Auth" />
+        </div>
+
+        <div class="form-group">
+          <label>Password:</label>
+          <input type="password" id="password" placeholder="For Basic Auth" />
+        </div>
+
         <button onclick="sendRequest()">🚀 Send Request</button>
+
         <div id="response" class="json-container"></div>
       </div>
 
