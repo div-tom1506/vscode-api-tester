@@ -46,9 +46,9 @@ async function handleApiRequest({ url, method, headers, body, token, username, p
     };
 
     const response = await axios(axiosOptions);
-    return { success: true, data: response.data };
+    return { success: true, statusCode: response.status, data: response.data };
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, statusCode: error.response?.status || "Unknown", error: error.message };
   }
 }
 
@@ -111,25 +111,43 @@ function getWebviewContent() {
           transform: scale(1.05);
         }
         .json-container {
+          position: relative;
           background: #222;
-          padding: 10px;
+          padding: 15px;
           border-radius: 5px;
           font-size: 16px;
           white-space: pre-wrap;
           word-wrap: break-word;
           transition: box-shadow 0.3s ease-in-out;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;  /* Ensures text starts at the top */
         }
         .success {
-          box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
+          box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
         }
         .error {
-          box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+          box-shadow: 0 0 20px rgba(255, 50, 50, 0.9);  /* More intense red glow */
         }
-        .key { color: #f08d49; }  /* Orange for keys */
-        .string { color: #8bc34a; }  /* Green for strings */
-        .number { color: #ffeb3b; }  /* Yellow for numbers */
-        .boolean { color: #03a9f4; }  /* Blue for booleans */
-        .null { color: #ff5722; }  /* Red for null */
+        .status-code {
+          position: absolute;
+          top: 5px;
+          right: 10px;
+          font-size: 12px;
+          font-weight: bold;
+          opacity: 0.8;
+        }
+        .status-success {
+          color: #00ff00;
+        }
+        .status-error {
+          color: #ff3333;  /* Brighter red */
+        }
+        .key { color: #f08d49; }  
+        .string { color: #8bc34a; }  
+        .number { color: #ffeb3b; }  
+        .boolean { color: #03a9f4; }  
+        .null { color: #ff5722; }  
       </style>
     </head>
     <body>
@@ -205,10 +223,16 @@ function getWebviewContent() {
           if (message.command === "response") {
             if (message.response.success) {
               responseDiv.className = "json-container success";
-              responseDiv.innerHTML = "<h3>✅ Response:</h3><pre>" + syntaxHighlight(JSON.stringify(message.response.data, null, 2)) + "</pre>";
+              responseDiv.innerHTML = \`
+                <div class="status-code status-success">\${message.response.statusCode}</div>
+                <pre>\${syntaxHighlight(JSON.stringify(message.response.data, null, 2))}</pre>
+              \`;
             } else {
               responseDiv.className = "json-container error";
-              responseDiv.innerHTML = "<h3 style='color:red;'>❌ Error:</h3><pre>" + message.response.error + "</pre>";
+              responseDiv.innerHTML = \`
+                <div class="status-code status-error">\${message.response.statusCode || "Error"}</div>
+                <pre>\${message.response.error}</pre>
+              \`;
             }
           }
         });
@@ -236,6 +260,9 @@ function getWebviewContent() {
     </html>
   `;
 }
+
+
+
 
 exports.activate = activate;
 function deactivate() { }
