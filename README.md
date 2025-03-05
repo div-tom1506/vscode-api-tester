@@ -12,6 +12,9 @@ A lightweight API Testing tool inside VS Code, designed as a minimal alternative
 - [x] VS Code Integration – Runs in a Webview Panel for seamless testing.
 - [x] Lightweight & Fast – No need for external apps like Postman or Insomnia.
 
+## VS Code Extension Link 
+### [vscode-api-tester](https://marketplace.visualstudio.com/items?itemName=div-tom1506.vscode-api-tester)
+
 ## Screenshots
 
 ![Example1](./assets/ss1.png)

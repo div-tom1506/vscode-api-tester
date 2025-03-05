@@ -121,14 +121,13 @@ function getWebviewContent() {
           transition: box-shadow 0.3s ease-in-out;
           display: flex;
           flex-direction: column;
-          align-items: flex-start;  /* Ensures text starts at the top */
+          align-items: flex-start;
         }
         .success {
           box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
         }
         .error {
-          box-shadow: 0 0 20px rgba(255, 50, 50, 0.9);  /* More intense red glow */
-        }
+          box-shadow: 0 0 20px rgba(255, 50, 50, 0.9);
         .status-code {
           position: absolute;
           top: 5px;
@@ -260,9 +259,6 @@ function getWebviewContent() {
     </html>
   `;
 }
-
-
-
 
 exports.activate = activate;
 function deactivate() { }
