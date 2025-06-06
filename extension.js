@@ -42,13 +42,18 @@ async function handleApiRequest({ url, method, headers, body, token, username, p
       url,
       headers: requestHeaders,
       data: body ? JSON.parse(body) : undefined,
-      timeout: 15000, // 15 seconds timeout
+      timeout: 15000,
     };
 
     const response = await axios(axiosOptions);
     return { success: true, statusCode: response.status, data: response.data };
   } catch (error) {
-    return { success: false, statusCode: error.response?.status || "Unknown", error: error.message };
+    return {
+      success: false,
+      statusCode: error.response?.status || "Unknown",
+      error: error.message,
+      data: error.response?.data || null
+    };
   }
 }
 
@@ -123,11 +128,8 @@ function getWebviewContent() {
           flex-direction: column;
           align-items: flex-start;
         }
-        .success {
-          box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
-        }
-        .error {
-          box-shadow: 0 0 20px rgba(255, 50, 50, 0.9);
+        .success { box-shadow: 0 0 15px rgba(0, 255, 0, 0.8); }
+        .error { box-shadow: 0 0 20px rgba(255, 50, 50, 0.9); }
         .status-code {
           position: absolute;
           top: 5px;
@@ -136,23 +138,20 @@ function getWebviewContent() {
           font-weight: bold;
           opacity: 0.8;
         }
-        .status-success {
-          color: #00ff00;
-        }
-        .status-error {
-          color: #ff3333;  /* Brighter red */
-        }
-        .key { color: #f08d49; }  
-        .string { color: #8bc34a; }  
-        .number { color: #ffeb3b; }  
-        .boolean { color: #03a9f4; }  
-        .null { color: #ff5722; }  
+        .status-success { color: #00ff00; }
+        .status-error { color: #ff3333; }
+        .key { color: #f08d49; }
+        .string { color: #8bc34a; }
+        .number { color: #ffeb3b; }
+        .boolean { color: #03a9f4; }
+        .null { color: #ff5722; }
+        button + pre, pre + button { margin-top: 8px; }
       </style>
     </head>
     <body>
       <div class="container">
         <h2>API Tester</h2>
-        
+
         <div class="form-group">
           <label>API URL:</label>
           <input type="text" id="url" placeholder="Enter API URL" />
@@ -201,43 +200,78 @@ function getWebviewContent() {
       <script>
         const vscode = acquireVsCodeApi();
 
+        window.onload = () => {
+          const previous = vscode.getState();
+          if (previous) {
+            document.getElementById("url").value = previous.url || "";
+            document.getElementById("method").value = previous.method || "GET";
+            document.getElementById("headers").value = previous.headers || "";
+            document.getElementById("body").value = previous.body || "";
+            document.getElementById("bearerToken").value = previous.token || "";
+            document.getElementById("username").value = previous.username || "";
+            document.getElementById("password").value = previous.password || "";
+          }
+        };
+
         function sendRequest() {
+          const headersText = document.getElementById("headers").value;
+          const bodyText = document.getElementById("body").value;
+
+          try {
+            if (headersText) JSON.parse(headersText);
+            if (bodyText) JSON.parse(bodyText);
+          } catch (err) {
+            const container = document.getElementById("response");
+            container.className = "json-container error";
+            container.innerHTML = \`<pre>❌ JSON Parse Error: \${err.message}</pre>\`;
+            return;
+          }
+
           const requestData = {
             url: document.getElementById("url").value,
             method: document.getElementById("method").value,
-            headers: document.getElementById("headers").value,
-            body: document.getElementById("body").value,
+            headers: headersText,
+            body: bodyText,
             token: document.getElementById("bearerToken").value,
             username: document.getElementById("username").value,
             password: document.getElementById("password").value
           };
 
+          vscode.setState(requestData);
           vscode.postMessage({ command: "sendRequest", data: requestData });
         }
 
         window.addEventListener("message", (event) => {
           const message = event.data;
-          const responseDiv = document.getElementById("response");
-
           if (message.command === "response") {
-            if (message.response.success) {
-              responseDiv.className = "json-container success";
-              responseDiv.innerHTML = \`
-                <div class="status-code status-success">\${message.response.statusCode}</div>
-                <pre>\${syntaxHighlight(JSON.stringify(message.response.data, null, 2))}</pre>
-              \`;
-            } else {
-              responseDiv.className = "json-container error";
-              responseDiv.innerHTML = \`
-                <div class="status-code status-error">\${message.response.statusCode || "Error"}</div>
-                <pre>\${message.response.error}</pre>
-              \`;
-            }
+            const container = document.getElementById("response");
+            container.className = \`json-container \${message.response.success ? "success" : "error"}\`;
+            container.innerHTML = \`
+              <div class="status-code \${message.response.success ? "status-success" : "status-error"}">
+                HTTP \${message.response.statusCode}
+              </div>
+            \`;
+
+            const pre = document.createElement("pre");
+            const formatted = message.response.success
+              ? JSON.stringify(message.response.data, null, 2)
+              : JSON.stringify({ error: message.response.error, data: message.response.data }, null, 2);
+            pre.innerHTML = syntaxHighlight(formatted);
+            container.appendChild(pre);
+
+            const copyBtn = document.createElement("button");
+            copyBtn.textContent = "📋 Copy JSON";
+            copyBtn.onclick = () => {
+              navigator.clipboard.writeText(formatted);
+              copyBtn.textContent = "✅ Copied!";
+              setTimeout(() => (copyBtn.textContent = "📋 Copy JSON"), 1500);
+            };
+            container.appendChild(copyBtn);
           }
         });
 
         function syntaxHighlight(json) {
-          json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
           return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(?=:)|\\b(true|false|null)\\b|-?\\d+(\\.\\d+)?(e[+-]?\\d+)?)/g, function (match) {
             let cls = "number";
             if (/^"/.test(match)) {
@@ -253,7 +287,7 @@ function getWebviewContent() {
             }
             return '<span class="' + cls + '">' + match + "</span>";
           });
-        }
+                  }
       </script>
     </body>
     </html>
